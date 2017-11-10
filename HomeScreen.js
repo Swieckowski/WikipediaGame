@@ -39,6 +39,12 @@ const HomeScreen = (props, { navigation }) => {
                 }}
                 title="Start New Game"
             />
+            <Button
+                onPress={() => {
+                    props.navigation.navigate('CustomGame');
+                }}
+                title="Custom Game"
+            />
         </View>
     )
 };

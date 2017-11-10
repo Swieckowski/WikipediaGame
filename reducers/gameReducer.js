@@ -39,7 +39,7 @@ export const stateClearer = () => {
     }
 };
 
-const startAndEndLoader = (startAndEnd) => {
+export const startAndEndLoader = (startAndEnd) => {
     return {
         type: GOT_START_AND_END,
         payload: startAndEnd
