@@ -3,6 +3,7 @@ import { StackNavigator } from 'react-navigation';
 import { View, Text, Button } from 'react-native';
 import HomeScreen from './HomeScreen';
 import Game from './Game';
+import GameDetails from './GameDetails';
 
 
 
@@ -12,6 +13,9 @@ const RootNavigator = StackNavigator({
   },
   GameStart: {
     screen: Game
+  },
+  GameDetails: {
+    screen: GameDetails
   }
 });
 

@@ -1,11 +1,12 @@
 import axios from 'axios';
 
 const initialState = {
-    start: "McDonald's",
-    end: "2006 Lebanon War",
+    start: "",
+    end: "",
     currentLinks: [],
     currentArticleTitle: "",
-    turns: []
+    turns: [],
+    loading: false
 }
 
 // Action type
@@ -14,8 +15,16 @@ const GOT_LINKS = "GOT_LINKS";
 const ADD_TURN = "ADD_TURN";
 const CLEAR_STATE = "CLEAR_STATE";
 const CHANGE_CURRENT_ARTICLE = "CHANGE_CURRENT_ARTICLE";
+const CHANGE_LOADING = "CHANGE_LOADING";
 
 // Action creators
+
+const loadingSwitch = (boolean) => {
+    return {
+        type: CHANGE_LOADING,
+        payload: boolean
+    }
+};
 
 export const currentArticle = (articleTitle) => {
     return {
@@ -53,13 +62,19 @@ export const addTurn = (turn) => {
 
 // Thunk creators
 export const loadStartAndEnd = () => dispatch => {
+    dispatch(loadingSwitch(true))
     fetch('https://en.wikipedia.org/w/api.php?action=query&list=random&rnnamespace=0&rnlimit=2&format=json')
         .then(response => response.json())
         .then(startAndEnd => dispatch(startAndEndLoader(startAndEnd.query.random)))
+        .then(result =>{
+            dispatch(loadingSwitch(false));
+            return result;
+        })
         .catch(error => console.log(error));
 }
 
 export const loadLinks = (title) => dispatch => {
+    dispatch(loadingSwitch(true))
     title = title.split(' ').join('_');
     fetch(`https://en.wikipedia.org/w/api.php?action=query&prop=links&titles=${title}&pllimit=max&format=json`)
         .then(response => response.json())
@@ -68,6 +83,10 @@ export const loadLinks = (title) => dispatch => {
             return links.query.pages[pageid]
         })
         .then(responseObj => dispatch(linkLoader(responseObj.links)))
+        .then(result =>{
+            dispatch(loadingSwitch(false));
+            return result;
+        })
         .catch(error => console.log(error));
 }
 
@@ -89,6 +108,9 @@ const Game = function (state = initialState, action) {
 
         case CHANGE_CURRENT_ARTICLE:
             return Object.assign({}, state, { currentArticleTitle: action.payload });
+
+        case CHANGE_LOADING:
+            return Object.assign({}, state, { loading: action.payload });
 
         default: return state
     }

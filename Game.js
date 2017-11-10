@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, Text, Button } from 'react-native';
+import { ScrollView, View, Text, Button, ActivityIndicator } from 'react-native';
 import { connect } from "react-redux";
 import { loadStartAndEnd, addTurn, loadLinks, currentArticle } from './reducers/gameReducer';
 import store from './store';
@@ -9,15 +9,26 @@ class GameStart extends React.Component {
         if(navigation.state.params){
             return {
                 title: navigation.state.params.title,
-                headerTitleStyle: {fontSize: 10}
+                headerTitleStyle: {fontSize: 8},
+                headerRight: (
+                    <Button 
+                        title="Info"
+                        onPress={()=> navigation.navigate('GameDetails')}
+                    />
+                )
             }
         }
 
     }
     render(){
         console.log("PROPS",this.props)
-        
-        if(!this.props.turns.length){
+        if(this.props.loading){
+            return (
+                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                    <ActivityIndicator/>
+                </View>
+            )
+        }else if(!this.props.turns.length){
             return (
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                     <Text>Start: {this.props.start}</Text>
@@ -27,7 +38,7 @@ class GameStart extends React.Component {
                     />
                     <Button
                         onPress={() => {
-                            this.props.navigation.setParams({title: this.props.start});
+                            this.props.navigation.setParams({title: "Target: "+this.props.end});
                             this.props.currentArticleTitleSetter(this.props.start);
                             this.props.loadLinks(this.props.start);
                             this.props.turnAdder(this.props.start);
@@ -58,7 +69,7 @@ class GameStart extends React.Component {
                                 key={i}
                                 onPress={() => {
                                     this.props.currentArticleTitleSetter(linkObj.title);
-                                    this.props.navigation.setParams({title: linkObj.title});
+                                    this.props.navigation.setParams({title: "Target: "+this.props.end});
                                     this.props.turnAdder(linkObj.title);
                                     this.props.loadLinks(linkObj.title);
                                 }}
@@ -77,7 +88,8 @@ const mapStateToProps = (state) => ({
     end: state.Game.end,
     turns: state.Game.turns,
     links: state.Game.currentLinks,
-    currentArticleTitle: state.Game.currentArticleTitle
+    currentArticleTitle: state.Game.currentArticleTitle,
+    loading: state.Game.loading
 });
 
 const mapDispatchToProps = (dispatch) => ({
