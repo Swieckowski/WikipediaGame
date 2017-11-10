@@ -5,7 +5,9 @@ import { loadStartAndEnd, addTurn, loadLinks, currentArticle } from './reducers/
 import store from './store';
 
 class GameStart extends React.Component {
+    
     static navigationOptions = ({navigation}) =>{
+        console.log(navigation.state.params)
         if(navigation.state.params){
             return {
                 title: navigation.state.params.title,
@@ -17,11 +19,20 @@ class GameStart extends React.Component {
                     />
                 )
             }
+        }else{
+            return{
+                headerRight: (
+                    <Button 
+                        title="Info"
+                        onPress={()=> navigation.navigate('GameDetails')}
+                    />
+                )
+            }
         }
 
     }
     render(){
-        console.log("PROPS",this.props)
+
         if(this.props.loading){
             return (
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
